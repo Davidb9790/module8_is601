@@ -152,3 +152,66 @@ def test_divide_by_zero_api(client):
     # Assert that the 'error' field contains the correct error message
     assert "Cannot divide by zero!" in response.json()['error'], \
         f"Expected error message 'Cannot divide by zero!', got '{response.json()['error']}'"
+
+# ---------------------------------------------
+# Additional Integration Tests for FastAPI Calculator
+# ---------------------------------------------
+
+def test_add_invalid_types_api(client):
+    response = client.post('/add', json={'a': "hello", 'b': 5})
+    assert response.status_code == 400
+    assert 'error' in response.json()
+
+
+def test_subtract_invalid_types_api(client):
+    response = client.post('/subtract', json={'a': None, 'b': 5})
+    assert response.status_code == 400
+    assert 'error' in response.json()
+
+
+def test_multiply_invalid_types_api(client):
+    # multiply("a", 5) is valid in Python, but your API should reject it
+    response = client.post('/multiply', json={'a': "a", 'b': 5})
+    assert response.status_code == 400
+    assert 'error' in response.json()
+
+
+def test_divide_invalid_types_api(client):
+    response = client.post('/divide', json={'a': "a", 'b': 5})
+    assert response.status_code == 400
+    assert 'error' in response.json()
+
+
+def test_add_float_precision_api(client):
+    response = client.post('/add', json={'a': 0.1, 'b': 0.2})
+    assert response.status_code == 200
+    assert response.json()['result'] == pytest.approx(0.3, rel=1e-6)
+
+
+def test_divide_float_precision_api(client):
+    response = client.post('/divide', json={'a': 1, 'b': 3})
+    assert response.status_code == 200
+    assert response.json()['result'] == pytest.approx(0.3333333, rel=1e-6)
+
+
+def test_add_missing_field_api(client):
+    response = client.post('/add', json={'a': 5})
+    assert response.status_code in (400, 422, 500)
+
+
+def test_subtract_missing_field_api(client):
+    response = client.post('/subtract', json={'b': 5})
+    assert response.status_code in (400, 422, 500)
+
+
+
+def test_multiply_large_numbers_api(client):
+    response = client.post('/multiply', json={'a': 10**6, 'b': 10**6})
+    assert response.status_code == 200
+    assert response.json()['result'] == 10**12
+
+
+def test_divide_negative_numbers_api(client):
+    response = client.post('/divide', json={'a': -10, 'b': 2})
+    assert response.status_code == 200
+    assert response.json()['result'] == -5

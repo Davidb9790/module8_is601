@@ -72,3 +72,140 @@ def test_calculator_divide_by_zero(page, fastapi_server):
     # "Error: Cannot divide by zero!". This verifies that the application handles division by zero
     # gracefully and displays the correct error message to the user.
     assert page.inner_text('#result') == 'Error: Cannot divide by zero!'
+
+@pytest.mark.e2e
+def test_calculator_subtract(page, fastapi_server):
+    """
+    Test the subtraction functionality of the calculator.
+
+    This test simulates a user performing a subtraction operation using the calculator
+    on the frontend. It fills in two numbers, clicks the "Subtract" button, and verifies
+    that the result displayed is correct.
+    """
+    # Navigate to the homepage
+    page.goto('http://localhost:8000')
+
+    # Fill in inputs
+    page.fill('#a', '10')
+    page.fill('#b', '5')
+
+    # Click the Subtract button
+    page.click('button:text("Subtract")')
+
+    # Allow frontend JS to update the result
+    page.wait_for_timeout(200)
+
+    # Verify the result text
+    assert page.inner_text('#result') == 'Calculation Result: 5'
+
+@pytest.mark.e2e
+def test_calculator_multiply(page, fastapi_server):
+    """
+    Test the multiplication functionality of the calculator.
+
+    This test simulates a user performing a multiplication operation using the calculator
+    on the frontend. It fills in two numbers, clicks the "Multiply" button, and verifies
+    that the result displayed is correct.
+    """
+    # Navigate to the homepage
+    page.goto('http://localhost:8000')
+
+    # Fill in inputs
+    page.fill('#a', '10')
+    page.fill('#b', '5')
+
+    # Click the Multiply button
+    page.click('button:text("Multiply")')
+
+    # Allow frontend JS to update the result
+    page.wait_for_timeout(200)
+
+    # Verify the result text
+    assert page.inner_text('#result') == 'Calculation Result: 50'
+
+@pytest.mark.e2e
+def test_calculator_divide(page, fastapi_server):
+    """
+    Test the normal division functionality of the calculator.
+
+    This test simulates a user performing a valid division operation using the calculator
+    on the frontend. It fills in two numbers, clicks the "Divide" button, and verifies
+    that the result displayed is correct.
+    """
+    # Navigate to the homepage
+    page.goto('http://localhost:8000')
+
+    # Fill in inputs
+    page.fill('#a', '10')
+    page.fill('#b', '2')
+
+    # Click the Divide button
+    page.click('button:text("Divide")')
+
+    # Allow frontend JS to update the result
+    page.wait_for_timeout(200)
+
+    # Verify the result text
+    assert page.inner_text('#result') == 'Calculation Result: 5'
+
+@pytest.mark.e2e
+def test_calculator_missing_value(page, fastapi_server):
+    """
+    Test that the calculator handles missing input values correctly.
+
+    This test simulates a user attempting to perform a calculation without
+    providing both input values. It verifies that the frontend displays the
+    appropriate error message instead of attempting the calculation.
+    """
+    page.goto('http://localhost:8000')
+
+    # Fill only one input
+    page.fill('#a', '10')
+    # Leave #b empty
+
+    # Click Add (could be any operation)
+    page.click('button:text("Add")')
+
+    page.wait_for_timeout(200)
+
+    # Verify the error message
+    assert page.inner_text('#result') == 'Error: Missing input values!'
+
+@pytest.mark.e2e
+def test_calculator_missing_value_a(page, fastapi_server):
+    """
+    Test that the calculator handles missing input 'a' correctly.
+    """
+    page.goto('http://localhost:8000')
+
+    # Leave #a empty
+    # Fill only b
+    page.fill('#b', '10')
+
+    page.click('button:text("Add")')
+
+    page.wait_for_timeout(200)
+
+    assert page.inner_text('#result') == 'Error: Missing input values!'
+
+@pytest.mark.e2e
+def test_calculator_both_values_empty(page, fastapi_server):
+    """
+    Test that the calculator handles the case where both input values are empty.
+
+    This test verifies that the frontend displays the correct error message when
+    the user attempts to perform a calculation without entering any numbers.
+    """
+    page.goto('http://localhost:8000')
+
+    # Leave both #a and #b empty
+    page.fill('#a', '')
+    page.fill('#b', '')
+
+    # Click Add (any operation works)
+    page.click('button:text("Add")')
+
+    page.wait_for_timeout(200)
+
+    # Verify the error message
+    assert page.inner_text('#result') == 'Error: Missing input values!'

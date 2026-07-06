@@ -55,7 +55,41 @@ def test_add(a: Number, b: Number, expected: Number) -> None:
     
     # Assert that the result of add(a, b) matches the expected value
     assert result == expected, f"Expected add({a}, {b}) to be {expected}, but got {result}"
+# Added Tests
+def test_add_invalid_types():
+    with pytest.raises(TypeError):
+        add("a", 5)
+    with pytest.raises(TypeError):
+        add(5, "b")
+    with pytest.raises(TypeError):
+        add(None, 3)
 
+
+def test_add_large_numbers():
+    assert add(10**12, 10**12) == 2 * 10**12
+
+
+def test_add_float_precision():
+    result = add(0.1, 0.2)
+    assert result == pytest.approx(0.3, rel=1e-6)
+
+
+def test_add_identity():
+    assert add(7, 0) == 7
+    assert add(0, 7) == 7
+
+
+def test_add_commutative():
+    assert add(3, 5) == add(5, 3)
+
+
+def test_add_negative_zero():
+    assert add(-0.0, 5) == 5
+    assert add(5, -0.0) == 5
+
+
+def test_add_mixed_types():
+    assert add(5, 2.5) == 7.5
 
 # ---------------------------------------------
 # Unit Tests for the 'subtract' Function
@@ -105,7 +139,44 @@ def test_subtract(a: Number, b: Number, expected: Number) -> None:
     # Assert that the result of subtract(a, b) matches the expected value
     assert result == expected, f"Expected subtract({a}, {b}) to be {expected}, but got {result}"
 
+# Added tests
+def test_subtract_invalid_types():
+    with pytest.raises(TypeError):
+        subtract("a", 5)
+    with pytest.raises(TypeError):
+        subtract(5, "b")
+    with pytest.raises(TypeError):
+        subtract(None, 3)
 
+
+def test_subtract_large_numbers():
+    assert subtract(10**12, 10**11) == 9 * 10**11
+
+
+def test_subtract_float_precision():
+    result = subtract(0.3, 0.1)
+    assert result == pytest.approx(0.2, rel=1e-6)
+
+
+def test_subtract_identity():
+    # subtracting zero should return the original number
+    assert subtract(7, 0) == 7
+    # subtracting a number from itself should return zero
+    assert subtract(7, 7) == 0
+
+
+def test_subtract_non_commutative():
+    # subtraction should NOT be commutative
+    assert subtract(10, 3) != subtract(3, 10)
+
+
+def test_subtract_negative_zero():
+    assert subtract(5, -0.0) == 5
+    assert subtract(-0.0, 5) == -5
+
+
+def test_subtract_mixed_types():
+    assert subtract(5, 2.5) == 2.5
 # ---------------------------------------------
 # Unit Tests for the 'multiply' Function
 # ---------------------------------------------
@@ -154,6 +225,51 @@ def test_multiply(a: Number, b: Number, expected: Number) -> None:
     # Assert that the result of multiply(a, b) matches the expected value
     assert result == expected, f"Expected multiply({a}, {b}) to be {expected}, but got {result}"
 
+# Added test
+def test_multiply_invalid_types():
+    # Python allows string * int (repetition), so we assert the real behavior
+    assert multiply("a", 5) == "aaaaa"
+    assert multiply(5, "b") == "bbbbb"
+
+    # But multiplying by None is still invalid
+    with pytest.raises(TypeError):
+        multiply(None, 3)
+
+
+
+def test_multiply_large_numbers():
+    assert multiply(10**6, 10**6) == 10**12
+
+
+def test_multiply_float_precision():
+    result = multiply(0.1, 0.2)
+    assert result == pytest.approx(0.02, rel=1e-6)
+
+
+def test_multiply_identity():
+    # multiplying by 1 should return the original number
+    assert multiply(7, 1) == 7
+    assert multiply(1, 7) == 7
+
+
+def test_multiply_zero_behavior():
+    # multiplying by zero should always return zero
+    assert multiply(999, 0) == 0
+    assert multiply(0, 999) == 0
+
+
+def test_multiply_commutative():
+    # multiplication SHOULD be commutative
+    assert multiply(4, 7) == multiply(7, 4)
+
+
+def test_multiply_negative_zero():
+    assert multiply(-0.0, 5) == 0.0
+    assert multiply(5, -0.0) == 0.0
+
+
+def test_multiply_mixed_types():
+    assert multiply(5, 2.5) == 12.5
 
 # ---------------------------------------------
 # Unit Tests for the 'divide' Function
@@ -202,6 +318,46 @@ def test_divide(a: Number, b: Number, expected: float) -> None:
     
     # Assert that the result of divide(a, b) matches the expected value
     assert result == expected, f"Expected divide({a}, {b}) to be {expected}, but got {result}"
+# Add test
+def test_divide_invalid_types():
+    # Strings cannot be divided, so TypeError is expected
+    with pytest.raises(TypeError):
+        divide("a", 5)
+    with pytest.raises(TypeError):
+        divide(5, "b")
+    with pytest.raises(TypeError):
+        divide(None, 3)
+
+
+def test_divide_large_numbers():
+    assert divide(10**12, 10**6) == pytest.approx(10**6)
+
+
+def test_divide_float_precision():
+    result = divide(1, 3)
+    assert result == pytest.approx(0.3333333, rel=1e-6)
+
+
+def test_divide_identity():
+    # dividing by 1 should return the original number
+    assert divide(7, 1) == 7.0
+
+
+def test_divide_non_commutative():
+    # division should NOT be commutative
+    assert divide(10, 2) != divide(2, 10)
+
+
+def test_divide_negative_zero():
+    # dividing -0.0 by a positive number behaves like 0.0
+    assert divide(-0.0, 5) == 0.0
+
+    # dividing by -0.0 should raise the same error as dividing by 0
+    with pytest.raises(Exception):
+        divide(5, -0.0)
+
+def test_divide_mixed_types():
+    assert divide(5, 2.5) == 2.0
 
 
 # ---------------------------------------------
