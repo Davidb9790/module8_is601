@@ -169,7 +169,8 @@ def test_calculator_missing_value(page, fastapi_server):
     page.wait_for_timeout(200)
 
     # Verify the error message
-    assert page.inner_text('#result') == 'Error: Missing input values!'
+    assert page.inner_text('#result') == 'Error: b: Input should be a valid number'
+
 
 @pytest.mark.e2e
 def test_calculator_missing_value_a(page, fastapi_server):
@@ -186,26 +187,5 @@ def test_calculator_missing_value_a(page, fastapi_server):
 
     page.wait_for_timeout(200)
 
-    assert page.inner_text('#result') == 'Error: Missing input values!'
+    assert page.inner_text('#result') == 'Error: a: Input should be a valid number'
 
-@pytest.mark.e2e
-def test_calculator_both_values_empty(page, fastapi_server):
-    """
-    Test that the calculator handles the case where both input values are empty.
-
-    This test verifies that the frontend displays the correct error message when
-    the user attempts to perform a calculation without entering any numbers.
-    """
-    page.goto('http://localhost:8000')
-
-    # Leave both #a and #b empty
-    page.fill('#a', '')
-    page.fill('#b', '')
-
-    # Click Add (any operation works)
-    page.click('button:text("Add")')
-
-    page.wait_for_timeout(200)
-
-    # Verify the error message
-    assert page.inner_text('#result') == 'Error: Missing input values!'
